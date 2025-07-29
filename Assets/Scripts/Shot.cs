@@ -5,10 +5,6 @@ public class Shot : MonoBehaviour {
     [SerializeField] private float timeToLive = 5f;
     
     private void Start() {
-        this.Invoke(nameof(DestroyShot), timeToLive);
-    }
-    
-    private void DestroyShot() {
-        Destroy(this.gameObject);
+        Destroy(this.gameObject, timeToLive);
     }
 }
