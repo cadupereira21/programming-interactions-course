@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 4501404751446666}
   - component: {fileID: 33981116531956078}
   - component: {fileID: 23447744355308034}
+  - component: {fileID: 7638886381121076264}
   m_Layer: 0
   m_Name: Cannon
   m_TagString: Untagged
@@ -179,6 +180,35 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7638886381121076264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1638347602806178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33c9156f16a0ef64685767b73eeb63f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  barrelTransform: {fileID: 4214672131642104}
+  tiltSpeed: 25
+  maxTiltAngle: 20
+  minTiltAngle: -20
+  rotationSpeed: 35
+  maxRotationAngle: 30
+  minRotationAngle: -30
+  cannonWheels:
+    leftBackWheel: {fileID: 0}
+    rightBackWheel: {fileID: 0}
+    leftFrontWheel: {fileID: 0}
+    rightFrontWheel: {fileID: 0}
+  wheelsRotationSpeed: 70
+  projectilePrefab: {fileID: 1196744780447740, guid: 65b22875f82135b43abdb115c7a6b345, type: 3}
+  projectileSpawnPosition: {fileID: 8088647598600948570}
+  fireForce: 30
+  fireCooldown: 1
 --- !u!1 &1730143908497386
 GameObject:
   m_ObjectHideFlags: 0

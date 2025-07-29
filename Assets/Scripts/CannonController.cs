@@ -1,45 +1,38 @@
 using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CannonController : MonoBehaviour {
     
-    [SerializeField]
-    private Transform barrelTransform;
+    [SerializeField] private Transform barrelTransform;
     
     [Header("Barrel Tilt Settings")]
-    [SerializeField]
-    private float tiltSpeed = 10f;
+    [SerializeField] private float tiltSpeed = 10f;
+    [SerializeField] private float maxTiltAngle;
+    [SerializeField] private float minTiltAngle;
 
-    [SerializeField]
-    private float maxTiltAngle;
-    
-    [SerializeField]
-    private float minTiltAngle;
-
-    [Header("Canon Rotation Settings")]
-
-    [SerializeField] 
-    private float rotationSpeed;
-
-    [SerializeField]
-    private float maxRotationAngle;
-    
-    [SerializeField]
-    private float minRotationAngle;
+    [Header("Cannon Rotation Settings")]
+    [SerializeField] private float rotationSpeed;
+    [SerializeField] private float maxRotationAngle;
+    [SerializeField] private float minRotationAngle;
     
     [Header("Wheels Rotation Settings")]
-    
-    [SerializeField]
-    private CanonWheels canonWheels;
+    [SerializeField] private CannonWheels cannonWheels;
+    [SerializeField] private float wheelsRotationSpeed;
 
-    [SerializeField] 
-    private float wheelsRotationSpeed;
+    [Header("Fire Settings")]
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private Transform projectileSpawnPosition;
+    [SerializeField] private float fireForce = 30f;
+    [SerializeField] private float fireCooldown = 1f;
     
     private SimpleControls _controls;
     
     private Vector2 _currentTilt = Vector2.zero;
-
     private Vector2 _currentRotation;
+
+    private bool _canFire = true;
 
     private void Awake() {
         _controls = new SimpleControls();
@@ -58,10 +51,12 @@ public class CannonController : MonoBehaviour {
 
     private void OnEnable() {
         _controls.Enable();
+        _controls.gameplay.fire.performed += OnFire;
     }
 
     private void OnDisable() {
         _controls.Disable();
+        _controls.gameplay.fire.performed -= OnFire;
     }
 
     private void Update() {
@@ -71,7 +66,7 @@ public class CannonController : MonoBehaviour {
         }
 
         if (input.x != 0) {
-            RotateCanon(input.x);
+            RotateCannon(input.x);
         }
     }
     
@@ -81,7 +76,7 @@ public class CannonController : MonoBehaviour {
         barrelTransform.localEulerAngles = _currentTilt;
     }
     
-    private void RotateCanon(float direction) {
+    private void RotateCannon(float direction) {
         float rotationDelta = direction * rotationSpeed * Time.deltaTime;
         _currentRotation.y = Mathf.Clamp(_currentRotation.y + rotationDelta, minRotationAngle, maxRotationAngle);
         if (_currentRotation.y > minRotationAngle + 0.1 && _currentRotation.y < maxRotationAngle - 0.1) {
@@ -93,14 +88,37 @@ public class CannonController : MonoBehaviour {
     private void RotateWheels(float direction) {
         float rotationDelta = direction * wheelsRotationSpeed * Time.deltaTime;
         
-        canonWheels.leftBackWheel.transform.Rotate(Vector3.right, rotationDelta);
-        canonWheels.rightBackWheel.transform.Rotate(Vector3.right, -rotationDelta);
-        canonWheels.leftFrontWheel.transform.Rotate(Vector3.right, rotationDelta);
-        canonWheels.rightFrontWheel.transform.Rotate(Vector3.right, -rotationDelta);
+        cannonWheels.leftBackWheel.transform.Rotate(Vector3.right, rotationDelta);
+        cannonWheels.rightBackWheel.transform.Rotate(Vector3.right, -rotationDelta);
+        cannonWheels.leftFrontWheel.transform.Rotate(Vector3.right, rotationDelta);
+        cannonWheels.rightFrontWheel.transform.Rotate(Vector3.right, -rotationDelta);
+    }
+    
+    private void OnFire(InputAction.CallbackContext obj) {
+        if (!_canFire) {
+            Debug.Log("[CannonController] Cannon is on cooldown.");
+            return;
+        }
+        
+        _canFire = false;
+        GameObject projectileInstance = Instantiate(projectilePrefab, projectileSpawnPosition.position, projectileSpawnPosition.rotation);
+        
+        if (projectileInstance.TryGetComponent(out Rigidbody rb)) {
+            rb.AddForce(projectileSpawnPosition.forward * fireForce, ForceMode.Impulse);
+        } else {
+            Debug.LogError("Projectile prefab does not have a Rigidbody component.");
+        }
+
+        this.StartCoroutine(WaitToFire());
+    }
+
+    private IEnumerator WaitToFire() {
+        yield return new WaitForSeconds(fireCooldown);
+        _canFire = true;
     }
 
     [Serializable]
-    public struct CanonWheels {
+    public struct CannonWheels {
         public GameObject leftBackWheel;
         public GameObject rightBackWheel;
         public GameObject leftFrontWheel;
