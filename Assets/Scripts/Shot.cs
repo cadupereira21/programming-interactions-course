@@ -1,16 +1,14 @@
 using UnityEngine;
 
-public class Shot : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
+public class Shot : MonoBehaviour {
+    
+    [SerializeField] private float timeToLive = 5f;
+    
+    private void Start() {
+        this.Invoke(nameof(DestroyShot), timeToLive);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+    
+    private void DestroyShot() {
+        Destroy(this.gameObject);
     }
 }
