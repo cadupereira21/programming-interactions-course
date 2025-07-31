@@ -7,7 +7,7 @@ namespace GameInput.Command {
         }
         
         private static void OpenMenu(MainMenuUI menu) {
-            UnityEngine.Debug.Log("[OpenMenuCommand] Opening menu!");
+            menu.gameObject.SetActive(!menu.gameObject.activeSelf);
         }
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 namespace GameInput {
     public class InputHandler : MonoBehaviour {
+        public static InputHandler Instance { get; private set; }
 
         [Header("References")]
         [SerializeField] private Cannon cannon;
@@ -16,11 +17,15 @@ namespace GameInput {
         private readonly Command.Command<Vector2, Cannon> _moveCommand = new MoveCommand(); 
         private readonly Command.Command<InputAction.CallbackContext, MainMenuUI> _openMenuCommand = new OpenMenuCommand();
 
-        public bool inProgress = false;
-        public bool isPressed = false;
-
         private void Awake() {
-            _controls = new SimpleControls();
+            if (Instance == null) {
+                Instance = this;
+                DontDestroyOnLoad(this);
+                
+                _controls = new SimpleControls();
+            } else {
+                Destroy(this);  
+            }
         }
 
         private void Start() {
