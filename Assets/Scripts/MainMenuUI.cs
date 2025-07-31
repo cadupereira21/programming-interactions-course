@@ -3,8 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenuUI : MonoBehaviour {
-    
-    public MainMenuUI Instance { get; private set; }
+    public static MainMenuUI Instance { get; private set; }
 
     private void Awake() {
         if (Instance != null && Instance != this) {
